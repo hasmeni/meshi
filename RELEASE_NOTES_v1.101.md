@@ -39,3 +39,6 @@ This release focuses on reliability and release hardening.
 
 ## License
 GNU General Public License v3.0 — see [LICENSE](LICENSE).
+
+---
+Created by **ironyLabs**.

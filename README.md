@@ -4,6 +4,8 @@
 
 Meshi connects to a MeshCore node over Bluetooth Low Energy (BLE) and lets you send messages, share your location, and play peer-to-peer games across a LoRa mesh — no internet, no cellular, no infrastructure required. Everything travels wirelessly through the mesh.
 
+_Created by **ironyLabs**._
+
 > ⚠️ Meshi is an independent, community-built client. It is not affiliated with or endorsed by the MeshCore project.
 
 ---
@@ -134,7 +136,7 @@ Issues and pull requests are welcome. Please keep changes focused and match the 
 Meshi is free software licensed under the **GNU General Public License v3.0**. See [LICENSE](LICENSE) for the full text.
 
 ```
-Copyright (C) 2026 Meshi contributors
+Copyright (C) 2026 ironyLabs
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

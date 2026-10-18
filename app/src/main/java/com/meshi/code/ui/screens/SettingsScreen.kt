@@ -235,6 +235,10 @@ fun SettingsScreen(
             SectionHeader("About")
 
             ListItem(
+                headlineContent = { Text("Developer") },
+                trailingContent = { Text("ironyLabs", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            )
+            ListItem(
                 headlineContent = { Text("Version") },
                 trailingContent = { Text(BuildConfig.VERSION_NAME, color = MaterialTheme.colorScheme.onSurfaceVariant) },
             )
