@@ -1,0 +1,56 @@
+# ============================================================
+# Meshi — Git ignore
+# ============================================================
+
+# --- Secrets / signing (NEVER commit) ---
+keystore.properties
+*.jks
+*.keystore
+local.properties
+
+# --- Gradle ---
+.gradle/
+build/
+app/build/
+captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# --- Android Studio / IntelliJ ---
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# --- VS Code / Kiro ---
+.vscode/
+
+# --- AI tooling / scratch ---
+.claude/
+.claude-brain/
+.memory/
+.remote-code-express/
+
+# --- Bundled UI reference (not part of the app build) ---
+sketchbook-ui-main.zip
+sketchbook-ui-main/
+
+# --- Internal / dev-only docs (not published) ---
+GRAYMATTER.md
+INSTRUCTIONS.md
+MESHI_DEV_REFERENCE.md
+MESHI_FEATURES_AND_METHODOLOGY.md
+CHANGES.md
+.github/copilot-instructions.md
+
+# --- OS cruft ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+
+# --- Kotlin ---
+.kotlin/

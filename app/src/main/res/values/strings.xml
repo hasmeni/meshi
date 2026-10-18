@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Meshi</string>
+    <string name="scan_title">Find Nodes</string>
+    <string name="scan_button">Scan</string>
+    <string name="stop_button">Stop</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="send">Send</string>
+    <string name="message_hint">Type a message…</string>
+    <string name="no_devices">No MeshCore nodes found</string>
+    <string name="permission_required">Bluetooth permission required</string>
+</resources>

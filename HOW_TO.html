@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meshi — How-To Guide</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3248;
+    --primary: #6c8ef7;
+    --primary-dim: #3d4f8c;
+    --text: #e2e6f3;
+    --text-dim: #8b92b3;
+    --accent: #4ecdc4;
+    --warn: #f7c36c;
+    --error: #f76c6c;
+    --success: #6cf7a8;
+    --radius: 10px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    background: var(--surface2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.85em;
+    font-family: 'Consolas', monospace;
+    color: var(--accent);
+  }
+
+  /* ── Layout ── */
+  .page-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 0 40px;
+    align-items: start;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12142b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 24px 36px;
+    text-align: center;
+  }
+  header .logo {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header .sub {
+    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 1rem;
+  }
+
+  /* ── Sidebar nav ── */
+  aside {
+    position: sticky;
+    top: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-top: 36px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+  aside h2 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+  aside ol { list-style: decimal; padding-left: 18px; }
+  aside li { margin: 3px 0; font-size: 0.82rem; }
+  aside a { color: var(--text-dim); }
+  aside a:hover { color: var(--primary); text-decoration: none; }
+
+  /* ── Main content ── */
+  main { min-width: 0; }
+
+  /* ── Guide sections ── */
+  .guide-section {
+    margin-top: 40px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .guide-section:first-child { border-top: none; }
+
+  .guide-section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    scroll-margin-top: 20px;
+  }
+  .guide-section h2 .step-num {
+    background: var(--primary-dim);
+    color: var(--primary);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  p { margin-bottom: 10px; }
+  ul, ol { padding-left: 22px; margin-bottom: 12px; }
+  li { margin: 5px 0; }
+
+  /* ── Steps ── */
+  .steps {
+    counter-reset: step;
+    padding: 0;
+    list-style: none;
+    margin-bottom: 12px;
+  }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 8px 0;
+  }
+  .steps li::before {
+    content: counter(step);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 50%;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── Callouts ── */
+  .tip, .warn, .danger {
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 0.88rem;
+  }
+  .tip {
+    background: #1a2a1d;
+    border-left: 3px solid var(--success);
+    color: #b3d9be;
+  }
+  .tip::before { content: "💡 Tip: "; font-weight: 600; }
+  .warn {
+    background: #2a2412;
+    border-left: 3px solid var(--warn);
+    color: #d9c89e;
+  }
+  .warn::before { content: "⚠️ Note: "; font-weight: 600; }
+  .danger {
+    background: #2a1212;
+    border-left: 3px solid var(--error);
+    color: #d9a0a0;
+  }
+  .danger::before { content: "🚨 Warning: "; font-weight: 600; }
+
+  /* ── Keyboard / button labels ── */
+  kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 0.85em;
+    font-family: inherit;
+    color: var(--text);
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 700px) {
+    .page-wrap { grid-template-columns: 1fr; }
+    aside { position: static; display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Meshi — How-To Guide</div>
+  <p class="sub">Step-by-step instructions for every feature</p>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Sidebar -->
+  <aside>
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#s1">Connecting to Your Node</a></li>
+      <li><a href="#s2">Sending &amp; Receiving Messages</a></li>
+      <li><a href="#s3">Replying to a Message</a></li>
+      <li><a href="#s4">Reacting to a Message</a></li>
+      <li><a href="#s5">Searching Messages</a></li>
+      <li><a href="#s6">Exporting Chat History</a></li>
+      <li><a href="#s7">Direct Messaging a Contact</a></li>
+      <li><a href="#s8">Managing Contacts</a></li>
+      <li><a href="#s9">Creating &amp; Joining Channels</a></li>
+      <li><a href="#s10">Sharing a Channel via QR</a></li>
+      <li><a href="#s11">Advertising Your Presence</a></li>
+      <li><a href="#s12">Enabling Location Sharing</a></li>
+      <li><a href="#s13">Activating SOS Beacon</a></li>
+      <li><a href="#s14">Enabling Stealth Mode</a></li>
+      <li><a href="#s15">Blocking a Contact</a></li>
+      <li><a href="#s16">Unblocking a Contact</a></li>
+      <li><a href="#s17">Backing Up Contacts</a></li>
+      <li><a href="#s18">Restoring Contacts</a></li>
+      <li><a href="#s19">Pinging a Contact</a></li>
+      <li><a href="#s20">Channel Utilisation Graph</a></li>
+      <li><a href="#s21">Node &amp; Radio Stats</a></li>
+      <li><a href="#s22">SNR Signal Trend</a></li>
+      <li><a href="#s23">Replying from a Notification</a></li>
+      <li><a href="#s24">Playing Games</a></li>
+      <li><a href="#s25">Viewing Game History</a></li>
+      <li><a href="#s26">Panic Wipe</a></li>
+      <li><a href="#s27">Changing the Theme</a></li>
+      <li><a href="#s28">Configuring Notifications</a></li>
+      <li><a href="#s29">Battery Alert</a></li>
+      <li><a href="#s30">Crash Log</a></li>
+    </ol>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+
+    <div class="guide-section" id="s1">
+      <h2><span class="step-num">1</span> Connecting to Your Node</h2>
+      <ol class="steps">
+        <li>Power on your MeshCore LoRa node and ensure Bluetooth is enabled on your phone.</li>
+        <li>Open Meshi. The <strong>Scan</strong> screen appears automatically.</li>
+        <li>Tap <kbd>Scan</kbd> to discover nearby BLE devices.</li>
+        <li>Tap your node in the list.</li>
+        <li>The app connects and navigates to the main screen.</li>
+      </ol>
+      <div class="tip">Meshi saves the last connected address and reconnects automatically on the next launch — you may not need to scan at all.</div>
+      <p>To forget the saved device: <strong>Settings → Device → Clear saved device</strong>.</p>
+    </div>
+
+    <div class="guide-section" id="s2">
+      <h2><span class="step-num">2</span> Sending &amp; Receiving Messages</h2>
+      <p><strong>Public channel:</strong></p>
+      <ol class="steps">
+        <li>Open the <strong>Channel</strong> tab (speech bubble icon in the bottom bar).</li>
+        <li>Type your message in the input field at the bottom.</li>
+        <li>Tap the send arrow.</li>
+      </ol>
+      <p><strong>Private channel:</strong></p>
+      <ol class="steps">
+        <li>Open the <strong>Channels</strong> tab (# icon).</li>
+        <li>Tap the channel you want.</li>
+        <li>Type and send as above.</li>
+      </ol>
+      <div class="tip">Messages are limited to 160 characters. A counter appears as you approach the limit. If you navigate away without sending, your draft is automatically saved.</div>
+    </div>
+
+    <div class="guide-section" id="s3">
+      <h2><span class="step-num">3</span> Replying to a Message</h2>
+      <ol class="steps">
+        <li>In any chat screen, <strong>swipe a message bubble to the right</strong>.</li>
+        <li>A quoted excerpt appears above the input field.</li>
+        <li>Type your reply and tap send.</li>
+      </ol>
+      <p>To cancel the quote without replying, tap the <kbd>×</kbd> button on the reply bar.</p>
+    </div>
+
+    <div class="guide-section" id="s4">
+      <h2><span class="step-num">4</span> Reacting to a Message</h2>
+      <ol class="steps">
+        <li>In any chat screen, <strong>long-press a received message bubble</strong>.</li>
+        <li>An emoji picker appears: 👍 ❤️ 😂 😮 😢 👎</li>
+        <li>Tap an emoji. Your reaction is sent to the message author over the mesh.</li>
+        <li>The emoji appears as a small pill chip beneath the bubble.</li>
+      </ol>
+      <div class="warn">You can only react to messages sent by others — not your own messages.</div>
+    </div>
+
+    <div class="guide-section" id="s5">
+      <h2><span class="step-num">5</span> Searching Messages</h2>
+      <ol class="steps">
+        <li>In any chat screen, tap the <strong>magnifying glass</strong> icon in the top bar.</li>
+        <li>Type your search query. Results filter in real time.</li>
+        <li>Tap the back arrow to exit search.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s6">
+      <h2><span class="step-num">6</span> Exporting Chat History</h2>
+      <ol class="steps">
+        <li>In any chat screen, tap the <strong>share icon</strong> in the top bar.</li>
+        <li>The system share sheet opens with the full chat as plain text.</li>
+        <li>Choose an app to save or forward the export.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s7">
+      <h2><span class="step-num">7</span> Direct Messaging a Contact</h2>
+      <ol class="steps">
+        <li>Open the <strong>Nodes</strong> tab (people icon).</li>
+        <li>Find the contact you want to message.</li>
+        <li>Tap <kbd>Message</kbd> on their contact card.</li>
+        <li>The DM screen opens. Type and send as usual.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s8">
+      <h2><span class="step-num">8</span> Managing Contacts</h2>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Save a contact</h3>
+      <p>In the <strong>Nodes</strong> tab, tap <kbd>Save</kbd> on a contact card. The contact persists across sessions.</p>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Set a nickname</h3>
+      <ol class="steps">
+        <li>Tap the <strong>pencil icon</strong> on a contact card.</li>
+        <li>Enter a display name and tap <kbd>Save</kbd>.</li>
+      </ol>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Assign a tag</h3>
+      <ol class="steps">
+        <li>Tap the <strong>tag icon</strong> on a contact card.</li>
+        <li>Enter a short tag (e.g. "Base Camp") and tap <kbd>Save</kbd>.</li>
+      </ol>
+      <p>Tags appear as filter chips at the top of the Nodes list.</p>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Mark as verified</h3>
+      <ol class="steps">
+        <li>Tap the <strong>shield icon</strong> on a contact card.</li>
+        <li>Confirm to mark the contact as verified.</li>
+      </ol>
+      <div class="tip">Use verified status after confirming a contact's identity in person, e.g. by comparing public key fingerprints.</div>
+    </div>
+
+    <div class="guide-section" id="s9">
+      <h2><span class="step-num">9</span> Creating &amp; Joining Private Channels</h2>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Create a new channel</h3>
+      <ol class="steps">
+        <li>Open the <strong>Channels</strong> tab.</li>
+        <li>Tap <kbd>New Channel</kbd> (or the + button).</li>
+        <li>Enter a channel name. A random 128-bit AES key is generated automatically.</li>
+        <li>Tap <kbd>Create</kbd>.</li>
+      </ol>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Join via QR code</h3>
+      <p>See <a href="#s10">Section 10</a>.</p>
+    </div>
+
+    <div class="guide-section" id="s10">
+      <h2><span class="step-num">10</span> Sharing a Channel via QR Code</h2>
+
+      <p><strong>To share:</strong></p>
+      <ol class="steps">
+        <li>Open the <strong>Channels</strong> tab.</li>
+        <li>Tap the <strong>QR code icon</strong> on the channel you want to share.</li>
+        <li>A QR code is displayed. Have the other person scan it.</li>
+      </ol>
+
+      <p><strong>To join from a QR code:</strong></p>
+      <ol class="steps">
+        <li>Scan the QR code with any standard QR scanner.</li>
+        <li>The scanner opens the Meshi app automatically.</li>
+        <li>A dialog appears: <em>"Join Channel? Join private channel '…' shared via QR code?"</em></li>
+        <li>Tap <kbd>Join</kbd>. The channel is added to a free slot.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s11">
+      <h2><span class="step-num">11</span> Advertising Your Presence</h2>
+      <ol class="steps">
+        <li>In the <strong>Channel</strong> tab, tap the <strong>tower icon</strong> (📡) in the top bar.</li>
+        <li>If location permission is granted, your current GPS coordinates are included.</li>
+        <li>If not yet granted, approve the permission request to include coordinates.</li>
+      </ol>
+      <div class="tip">For ongoing location inclusion in every advertisement, use persistent location sharing instead (see Section 12).</div>
+    </div>
+
+    <div class="guide-section" id="s12">
+      <h2><span class="step-num">12</span> Enabling Location Sharing</h2>
+      <ol class="steps">
+        <li>In the <strong>Channel</strong> tab, tap the <strong>location pin icon</strong> in the top bar.</li>
+        <li>Grant location permission if prompted.</li>
+        <li>The icon turns <strong>blue</strong> — all future advertisements include your GPS coordinates.</li>
+        <li>Tap the icon again to turn location sharing off.</li>
+      </ol>
+      <p>Your position will appear as a marker on other users' Map tabs.</p>
+    </div>
+
+    <div class="guide-section" id="s13">
+      <h2><span class="step-num">13</span> Activating SOS Beacon</h2>
+      <ol class="steps">
+        <li>In the <strong>Channel</strong> tab, tap the <strong>SOS button</strong> in the top bar.</li>
+        <li>The button turns <strong>red</strong> — a flood advertisement is sent every 30 seconds.</li>
+        <li>Tap the SOS button again to stop the beacon.</li>
+      </ol>
+      <div class="warn">SOS mode respects Stealth mode. If Stealth is active, SOS advertisements are suppressed.</div>
+    </div>
+
+    <div class="guide-section" id="s14">
+      <h2><span class="step-num">14</span> Enabling Stealth Mode</h2>
+      <ol class="steps">
+        <li>In the <strong>Channel</strong> tab, tap the <strong>eye icon</strong> in the top bar.</li>
+        <li>The icon changes to a <strong>crossed eye</strong> and turns teal — stealth is active.</li>
+        <li>You can still receive messages but will not be detected by other nodes.</li>
+        <li>Tap again to resume normal advertising.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s15">
+      <h2><span class="step-num">15</span> Blocking a Contact</h2>
+      <ol class="steps">
+        <li>Open the <strong>Nodes</strong> tab.</li>
+        <li>Tap the <strong>block icon</strong> (🚫) on the contact's card.</li>
+        <li>Confirm in the dialog.</li>
+      </ol>
+      <p>The contact's card turns red. All future messages from them are silently ignored and never saved to the database.</p>
+    </div>
+
+    <div class="guide-section" id="s16">
+      <h2><span class="step-num">16</span> Unblocking a Contact</h2>
+      <p><strong>From the Nodes tab:</strong> Tap the block icon on the red-tinted contact card to unblock.</p>
+      <p><strong>From Settings:</strong></p>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Scroll to <strong>Blocked Contacts</strong>.</li>
+        <li>Tap <kbd>Unblock</kbd> next to the contact ID.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s17">
+      <h2><span class="step-num">17</span> Backing Up Contacts</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong> (gear icon).</li>
+        <li>Scroll to <strong>Device → Backup contacts</strong> and tap it.</li>
+        <li>The system share sheet opens with a JSON file containing all nicknames, tags, and verified flags.</li>
+        <li>Save to Files, email to yourself, or copy to another device.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s18">
+      <h2><span class="step-num">18</span> Restoring Contacts from Backup</h2>
+      <ol class="steps">
+        <li>Ensure the backup JSON file is accessible on the device (Downloads, Files, etc.).</li>
+        <li>Open <strong>Settings → Device → Restore contacts</strong>.</li>
+        <li>Select the backup JSON file in the file picker.</li>
+        <li>A dialog confirms the number of contacts imported.</li>
+      </ol>
+      <div class="tip">Restoring merges into existing data — it does not delete contacts already on the device. Existing entries are overwritten by the backup values.</div>
+    </div>
+
+    <div class="guide-section" id="s19">
+      <h2><span class="step-num">19</span> Pinging a Contact</h2>
+      <p><strong>From the Nodes tab:</strong></p>
+      <ol class="steps">
+        <li>Find the contact in the list.</li>
+        <li>Tap the <kbd>Ping</kbd> button on their card.</li>
+        <li>The RTT appears in a snackbar (e.g. "Ping Alice: ~340ms RTT").</li>
+      </ol>
+      <p><strong>From a DM conversation:</strong></p>
+      <ol class="steps">
+        <li>Tap the <strong>ping icon</strong> in the DM top bar.</li>
+        <li>The RTT appears in a snackbar.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s20">
+      <h2><span class="step-num">20</span> Viewing the Channel Utilisation Graph</h2>
+      <ol class="steps">
+        <li>Open any channel chat screen (public or private).</li>
+        <li>Tap the <strong>bar chart icon</strong> in the top bar.</li>
+        <li>A bottom sheet opens showing messages per hour over the last 24 hours.</li>
+        <li>Tap outside the sheet or swipe it down to close.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s21">
+      <h2><span class="step-num">21</span> Viewing Node &amp; Radio Stats</h2>
+      <ol class="steps">
+        <li>Open the <strong>Channel</strong> tab (public channel).</li>
+        <li>Tap the <strong>info icon</strong> (ℹ) in the top bar.</li>
+        <li>A dialog shows: node name, firmware version, hardware model, battery %, free storage, and radio configuration.</li>
+        <li>Tap <kbd>Close</kbd> to dismiss.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s22">
+      <h2><span class="step-num">22</span> Viewing the SNR Signal Trend</h2>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">What is it?</h3>
+      <p>The three-bar signal icon in a DM conversation top bar is the <strong>SNR trend graph toggle</strong>. SNR stands for <strong>Signal-to-Noise Ratio</strong>, measured in decibels (dB). It reflects how cleanly your node is receiving radio packets from that contact through the mesh.</p>
+      <p>A <strong>higher SNR</strong> means a stronger, cleaner signal. A <strong>lower or negative SNR</strong> means the signal is weak or noisy.</p>
+      <p>Tapping the icon reveals a sparkline chart showing the SNR value recorded for each recent incoming message — up to the last 30 readings.</p>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Why is it useful?</h3>
+      <ul>
+        <li>Helps you judge whether you and your contact are within reliable mesh range</li>
+        <li>A downward trend may mean you are moving apart or conditions are changing — a useful cue to relay through another node or reposition</li>
+        <li>Useful for comparing different locations or antenna setups</li>
+      </ul>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">How to use it</h3>
+      <p>Available once at least two messages have been received from the contact.</p>
+      <ol class="steps">
+        <li>Open a DM conversation.</li>
+        <li>Tap the <strong>signal bars icon</strong> in the top bar (only visible when enough readings exist).</li>
+        <li>A sparkline chart appears at the top of the message list showing received SNR (dB) over recent messages.</li>
+        <li>Tap the icon again to hide the chart.</li>
+      </ol>
+      <div class="tip">The data comes from SNR values embedded in each incoming radio packet by the MeshCore node. Up to 30 readings per contact are stored locally in the app's database.</div>
+    </div>
+
+    <div class="guide-section" id="s23">
+      <h2><span class="step-num">23</span> Replying from a Notification</h2>
+      <ol class="steps">
+        <li>A message notification appears in the status bar.</li>
+        <li>Expand the notification (swipe down or long-press it).</li>
+        <li>Tap <kbd>Reply</kbd>.</li>
+        <li>Type your reply in the inline text field.</li>
+        <li>Tap the send arrow.</li>
+      </ol>
+      <p>The reply is sent over the mesh and the notification is automatically dismissed. You do not need to open the app.</p>
+    </div>
+
+    <div class="guide-section" id="s24">
+      <h2><span class="step-num">24</span> Playing Games</h2>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Challenging a contact</h3>
+      <ol class="steps">
+        <li>Open the <strong>Nodes</strong> tab.</li>
+        <li>Find the contact you want to play.</li>
+        <li>Tap the game button on their card: <kbd>Reversi</kbd>, <kbd>Chess</kbd>, <kbd>TTT</kbd>, or <kbd>BSH</kbd>.</li>
+        <li>An invite is sent. The game screen opens when they accept.</li>
+      </ol>
+
+      <h3 style="color:var(--accent);margin:14px 0 6px;">Battleship placement phase</h3>
+      <ol class="steps">
+        <li>Select a ship from the chip bar.</li>
+        <li>Toggle <kbd>H</kbd> / <kbd>V</kbd> to choose orientation.</li>
+        <li>Tap a cell on the grid to place the ship.</li>
+        <li>Tap <kbd>Undo</kbd> to remove the last placed ship.</li>
+        <li>Once all 5 ships are placed, tap <kbd>Ready</kbd>.</li>
+      </ol>
+
+      <div class="tip">The screen always clearly shows whose turn it is. Valid moves are highlighted in Chess. In Battleship, your fleet and the enemy waters are shown on separate grids.</div>
+    </div>
+
+    <div class="guide-section" id="s25">
+      <h2><span class="step-num">25</span> Viewing Game History</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Tap <strong>Game History</strong> under the Debug section.</li>
+        <li>A leaderboard shows wins, losses, and draws for all four games.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s26">
+      <h2><span class="step-num">26</span> Performing a Panic Wipe</h2>
+      <div class="danger">This is irreversible. All messages, contacts, nicknames, game records, and settings will be permanently deleted.</div>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Scroll to the <strong>Danger Zone</strong> section at the bottom.</li>
+        <li>Tap <kbd>Panic Wipe</kbd>.</li>
+        <li>Read the confirmation dialog carefully.</li>
+        <li>Tap <kbd>Wipe Everything</kbd>.</li>
+      </ol>
+      <p>The BLE connection is closed and the app returns to the scan screen.</p>
+    </div>
+
+    <div class="guide-section" id="s27">
+      <h2><span class="step-num">27</span> Changing the App Theme</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Under <strong>Appearance</strong>, tap one of the three chips: <kbd>Dark</kbd>, <kbd>Light</kbd>, or <kbd>System</kbd>.</li>
+      </ol>
+      <p>The theme changes immediately.</p>
+    </div>
+
+    <div class="guide-section" id="s28">
+      <h2><span class="step-num">28</span> Configuring Notifications</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Under <strong>Notifications</strong>, toggle <em>Direct message notifications</em> and/or <em>Channel message notifications</em> independently.</li>
+      </ol>
+    </div>
+
+    <div class="guide-section" id="s29">
+      <h2><span class="step-num">29</span> Configuring the Battery Alert</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings</strong>.</li>
+        <li>Under <strong>Battery Alert</strong>, toggle <em>Low battery alert</em> on.</li>
+        <li>Use the slider to set the alert threshold (5%–50%, default 20%).</li>
+      </ol>
+      <div class="tip">The service polls battery level every 5 minutes. The alert fires once per charge cycle and resets automatically when the battery recovers above the threshold.</div>
+    </div>
+
+    <div class="guide-section" id="s30">
+      <h2><span class="step-num">30</span> Viewing the Crash Log</h2>
+      <ol class="steps">
+        <li>Open <strong>Settings → Debug → Crash Log</strong>.</li>
+        <li>The most recent unhandled exception stack trace is shown.</li>
+        <li>Use the <kbd>Copy</kbd> button to copy the trace to the clipboard.</li>
+      </ol>
+      <p>If no crash has occurred, the log is empty.</p>
+    </div>
+
+    <footer>
+      Meshi &mdash; Offline mesh radio chat &mdash; Android &mdash; MeshCore Protocol
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>

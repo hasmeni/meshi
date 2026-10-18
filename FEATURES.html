@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meshi — Features Overview</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3248;
+    --primary: #6c8ef7;
+    --primary-dim: #3d4f8c;
+    --text: #e2e6f3;
+    --text-dim: #8b92b3;
+    --accent: #4ecdc4;
+    --warn: #f7c36c;
+    --error: #f76c6c;
+    --radius: 10px;
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0;
+  }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Layout ── */
+  .page-wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ── Hero ── */
+  header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12142b 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 52px 24px 40px;
+    text-align: center;
+  }
+  header .logo {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header .tagline {
+    margin-top: 8px;
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  header .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 36px 0 0;
+  }
+  .toc h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: 14px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 4px 0; font-size: 0.93rem; }
+
+  /* ── Sections ── */
+  section { margin-top: 48px; }
+  section h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section h2 .icon { font-size: 1.1rem; }
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 20px 0 6px;
+  }
+  p { margin-bottom: 10px; color: var(--text); }
+  ul, ol { padding-left: 22px; margin-bottom: 10px; }
+  li { margin: 4px 0; }
+
+  /* ── Feature cards ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .card .card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .card p { font-size: 0.88rem; color: var(--text-dim); margin: 0; }
+
+  /* ── Table ── */
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
+  th { background: var(--surface2); color: var(--text-dim); text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--accent); font-weight: 500; white-space: nowrap; }
+
+  /* ── Callout ── */
+  .callout {
+    background: var(--surface);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+  .callout.warn { border-color: var(--warn); }
+  .callout.error { border-color: var(--error); }
+
+  /* ── Game chips ── */
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .game-card .game-name { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .game-card p { font-size: 0.83rem; color: var(--text-dim); margin: 0; }
+
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Meshi</div>
+  <p class="tagline">Off-grid mesh radio chat for Android — no internet, no cellular, no infrastructure required.</p>
+  <div class="badge-row">
+    <span class="badge">LoRa Mesh</span>
+    <span class="badge">BLE</span>
+    <span class="badge">End-to-End Encrypted DMs</span>
+    <span class="badge">Offline-First</span>
+    <span class="badge">MeshCore Protocol</span>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <nav class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+      <li><a href="#connection">Connection &amp; Device Management</a></li>
+      <li><a href="#public-chat">Public Channel Chat</a></li>
+      <li><a href="#private-channels">Private Channels</a></li>
+      <li><a href="#direct-messages">Direct Messaging</a></li>
+      <li><a href="#message-features">Message Features</a></li>
+      <li><a href="#contacts">Contacts &amp; Node Discovery</a></li>
+      <li><a href="#map">Map</a></li>
+      <li><a href="#advertising">Advertising &amp; Location</a></li>
+      <li><a href="#privacy">Privacy &amp; Security</a></li>
+      <li><a href="#notifications">Notifications &amp; Background Service</a></li>
+      <li><a href="#games">Games</a></li>
+      <li><a href="#diagnostics">Diagnostics &amp; Stats</a></li>
+      <li><a href="#settings">Settings</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="connection">
+    <h2><span class="icon">📡</span> 1. Connection &amp; Device Management</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">BLE Scanning</div>
+        <p>Discover nearby MeshCore nodes via Bluetooth. Tap any device in the list to connect.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Auto-Reconnect</div>
+        <p>The last connected BLE address is saved. The app reconnects automatically on next launch.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Foreground Service</div>
+        <p>A persistent background service keeps the link alive and delivers notifications while the app is minimised.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Clean Disconnect</div>
+        <p>Tap the disconnect button to close the BLE link and return to the scan screen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="public-chat">
+    <h2><span class="icon">💬</span> 2. Public Channel Chat</h2>
+    <p>The <strong>Channel</strong> tab shows the shared public mesh channel — all nodes within range can read and send.</p>
+    <ul>
+      <li>Chat bubbles: your messages right-aligned, others left-aligned</li>
+      <li>Each bubble shows sender name, timestamp, SNR (dB), and hop count</li>
+      <li>Long-press a received message to add an emoji reaction</li>
+      <li>Swipe right to quote-reply</li>
+      <li>Nearby-node strip at the top shows recent advertisements</li>
+      <li>160-character limit with live counter</li>
+      <li>Draft text saved automatically if you navigate away</li>
+    </ul>
+  </section>
+
+  <!-- 3 -->
+  <section id="private-channels">
+    <h2><span class="icon">#</span> 3. Private Channels</h2>
+    <p>The <strong>Channels</strong> tab lists all configured private channels (slots 1–7).</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">AES-128 Encryption</div>
+        <p>Each channel uses a unique 128-bit symmetric key. Only nodes with the key can decrypt messages.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Create &amp; Manage</div>
+        <p>Create a channel with a name and auto-generated key, or supply your own. Update or delete channels at any time.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">QR Code Sharing</div>
+        <p>Share a channel via QR code. Scanning it opens a join dialog in Meshi using the <code>meshichan://</code> deep link.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Utilisation Graph</div>
+        <p>Tap the bar-chart icon in any channel chat to see a 24-hour histogram of message activity.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section id="direct-messages">
+    <h2><span class="icon">🔒</span> 4. Direct Messaging</h2>
+    <p>One-to-one private messages encrypted with the recipient's public key.</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Delivery Receipts</div>
+        <p>Single tick ✓ = sent. Double tick ✓✓ = confirmed delivered. RTT shown beside the double tick.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Typing Indicators</div>
+        <p>"typing…" appears in the contact header when the other person is composing a message.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">SNR Trend Graph</div>
+        <p>A sparkline chart shows received signal strength over recent messages. Tap the signal-bars icon to show/hide.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Ping</div>
+        <p>Tap the ping icon in the DM top bar to measure round-trip latency. Result appears in a snackbar.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Emoji Reactions</div>
+        <p>Long-press any received message to react. Reactions are delivered to the sender over the mesh.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Quote Reply</div>
+        <p>Swipe right on any message to inline-quote it in your reply.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="message-features">
+    <h2><span class="icon">✨</span> 5. Message Features</h2>
+
+    <h3>Swipe-to-Reply / Quote</h3>
+    <p>Swipe any bubble rightward to pre-fill the input with a quoted excerpt.</p>
+
+    <h3>Emoji Reactions</h3>
+    <p>Long-press a received message to choose from 👍 ❤️ 😂 😮 😢 👎. Reactions are sent over the mesh and displayed as pill chips beneath the bubble, aggregated with a count when multiple people react.</p>
+
+    <h3>Message Search</h3>
+    <p>Tap the search icon in any chat top bar. Results filter in real time against the full message history stored in the local database.</p>
+
+    <h3>Message Export</h3>
+    <p>Tap the share icon to export the full chat as plain text via the system share sheet.</p>
+
+    <h3>Draft Persistence</h3>
+    <p>Unsent text is saved per-conversation and restored when you return — even across app restarts.</p>
+
+    <h3>Character Counter</h3>
+    <p>A live counter (160-char limit) appears below the input field as you type, turning red near the limit.</p>
+  </section>
+
+  <!-- 6 -->
+  <section id="contacts">
+    <h2><span class="icon">👤</span> 6. Contacts &amp; Node Discovery</h2>
+
+    <h3>Nodes Tab</h3>
+    <p>Lists all contacts the app has observed via advertisements or direct message, with their signal, hop count, and last-seen time.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Save Contact</div>
+        <p>Persist a contact to the local database so it survives reconnects and app restarts.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Nicknames</div>
+        <p>Override a node's broadcast name with a friendly label that appears everywhere in the app.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Tags</div>
+        <p>Assign a short tag (e.g. "Team A") and use tag filter chips to quickly view a subset of contacts.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Verified Badge</div>
+        <p>Mark a contact as verified after confirming their identity. A blue shield appears in chat and on the card.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Block List</div>
+        <p>Block contacts to silently drop all their future messages before they reach the database.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Backup &amp; Restore</div>
+        <p>Export all nicknames, tags, and verified flags to JSON. Restore from a backup file on any device.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section id="map">
+    <h2><span class="icon">🗺️</span> 7. Map</h2>
+    <p>The <strong>Map</strong> tab plots all nodes that have broadcast GPS coordinates.</p>
+    <ul>
+      <li>Each node is shown as a named marker</li>
+      <li>Tap a marker for name, short ID, and coordinates</li>
+      <li>Your own position shown when location sharing is enabled</li>
+      <li>Updates automatically as new GPS-tagged advertisements arrive</li>
+    </ul>
+  </section>
+
+  <!-- 8 -->
+  <section id="advertising">
+    <h2><span class="icon">📶</span> 8. Advertising &amp; Location</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">One-Shot Advertise</div>
+        <p>Tap the tower icon to broadcast your name, node ID, and current GPS coordinates to nearby nodes.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Persistent Location Sharing</div>
+        <p>Toggle the location pin to automatically include GPS in every outgoing advertisement. Icon turns blue when active.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">SOS Beacon</div>
+        <p>Sends a flood advertisement every 30 seconds. Button turns red when active. Use in emergencies.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Stealth Mode</div>
+        <p>Suppresses all outgoing advertisements while still allowing message receipt. Icon shows a crossed eye when active.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section id="privacy">
+    <h2><span class="icon">🛡️</span> 9. Privacy &amp; Security</h2>
+
+    <h3>Block List</h3>
+    <p>Blocked contacts' messages are dropped at the repository layer — they never reach the database. Manage from the Nodes tab or Settings.</p>
+
+    <h3>Stealth Mode</h3>
+    <p>No outgoing advertisements means other nodes cannot detect your presence on the mesh.</p>
+
+    <h3>Private Channel Encryption</h3>
+    <p>128-bit AES symmetric key per channel. Only nodes with the key can decrypt messages.</p>
+
+    <h3>Direct Message Encryption</h3>
+    <p>DMs are encrypted with the recipient's public key. Only the intended recipient can decrypt.</p>
+
+    <h3>Panic Wipe</h3>
+    <div class="callout error">⚠️ Irreversible — permanently deletes all messages, contacts, nicknames, game records, and settings. Closes the BLE connection and returns to the scan screen.</div>
+  </section>
+
+  <!-- 10 -->
+  <section id="notifications">
+    <h2><span class="icon">🔔</span> 10. Notifications &amp; Background Service</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Incoming Message Notifications</div>
+        <p>High-priority notifications for new DMs and channel messages. Configurable per message type in Settings.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Quick Reply</div>
+        <p>Reply inline from the notification shade without opening the app. The notification dismisses itself after sending.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Battery Low Alert</div>
+        <p>Monitors the node's battery every 5 minutes. Fires a high-priority alert when it drops below the configured threshold.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Foreground Service</div>
+        <p>A persistent status notification ("Meshi — Connected") keeps the service alive. Low-priority and non-dismissible.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section id="games">
+    <h2><span class="icon">🎮</span> 11. Games</h2>
+    <p>All games are played peer-to-peer over the mesh via DM messages. Challenge any contact from the Nodes tab. Game history is tracked and visible in Settings → Game History.</p>
+
+    <div class="game-grid">
+      <div class="game-card">
+        <div class="game-name">♟ Reversi</div>
+        <p>Classic 8×8 Othello. Valid moves highlighted. Game ends when neither player can move.</p>
+      </div>
+      <div class="game-card">
+        <div class="game-name">♜ Chess</div>
+        <p>Full chess with move validation, check detection, castling, en passant, and pawn promotion.</p>
+      </div>
+      <div class="game-card">
+        <div class="game-name">⊞ Tic-Tac-Toe</div>
+        <p>Fast 3×3 grid game. Ideal for low-signal conditions — minimal bandwidth required.</p>
+      </div>
+      <div class="game-card">
+        <div class="game-name">⚓ Battleship</div>
+        <p>10×10 grid, 5 ships. Two-phase: place your fleet, then take turns calling shots. Win/loss and sunk state tracked.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section id="diagnostics">
+    <h2><span class="icon">📊</span> 12. Diagnostics &amp; Stats</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-title">Node Info</div>
+        <p>Firmware version, hardware model, battery %, free storage. Tap the ℹ icon in the Channel top bar.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Radio Stats</div>
+        <p>TX power, frequency, bandwidth, spreading factor, coding rate for the connected radio.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">SNR Trend Graph</div>
+        <p>Sparkline of received SNR (dB) over recent DM messages. Tap the signal icon in the DM top bar.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Channel Utilisation</div>
+        <p>24-hour bar chart of messages per hour. Tap the bar-chart icon in any chat top bar.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Ping / Latency</div>
+        <p>Send a latency probe and see the RTT. Available via the ping icon in DM top bar or the Ping button on contact cards.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Crash Log</div>
+        <p>Most recent unhandled exception stack trace. Accessible from Settings → Debug → Crash Log.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section id="settings">
+    <h2><span class="icon">⚙️</span> 13. Settings</h2>
+
+    <table>
+      <thead>
+        <tr><th>Setting</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Theme</td><td>Dark, Light, or System</td></tr>
+        <tr><td>DM notifications</td><td>Enable / disable incoming DM notifications</td></tr>
+        <tr><td>Channel notifications</td><td>Enable / disable channel message notifications</td></tr>
+        <tr><td>Low battery alert</td><td>Toggle and configure threshold (5%–50%)</td></tr>
+        <tr><td>Backup contacts</td><td>Export nicknames, tags, verified flags as JSON</td></tr>
+        <tr><td>Restore contacts</td><td>Import contacts from a backup JSON file</td></tr>
+        <tr><td>Clear saved device</td><td>Forget the auto-connect BLE address</td></tr>
+        <tr><td>Blocked Contacts</td><td>View and unblock any blocked contacts</td></tr>
+        <tr><td>Crash Log</td><td>View the most recent unhandled exception</td></tr>
+        <tr><td>Game History</td><td>Win / loss / draw records for all four games</td></tr>
+        <tr><td>Panic Wipe</td><td>Erase all data and reset to factory state</td></tr>
+        <tr><td>Version / Build / App ID</td><td>App version information</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    Meshi &mdash; Offline mesh radio chat &mdash; Android &mdash; MeshCore Protocol
+  </footer>
+
+</div>
+</body>
+</html>

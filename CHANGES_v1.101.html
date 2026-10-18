@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meshi v1.101 — Architecture &amp; Reliability Improvements</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --red: #f85149;
+            --code-bg: #1c2128;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.25rem;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2.high { color: var(--red); }
+        h2.medium { color: var(--orange); }
+        h2.files { color: var(--green); }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--text);
+        }
+
+        p { margin-bottom: 0.75rem; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .card .label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        .label-high { background: rgba(248,81,73,0.15); color: var(--red); }
+        .label-medium { background: rgba(210,153,34,0.15); color: var(--orange); }
+
+        .problem, .fix {
+            margin-bottom: 0.5rem;
+        }
+
+        .problem strong, .fix strong {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        ul {
+            margin: 0.5rem 0 0.75rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            margin: 0.75rem 0;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            line-height: 1.5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.75rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--surface);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        td code {
+            font-size: 0.85em;
+        }
+
+        .file-list {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .file-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .file-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .badge-new { background: rgba(63,185,80,0.15); color: var(--green); }
+        .badge-mod { background: rgba(88,166,255,0.15); color: var(--accent); }
+
+        .file-path {
+            font-family: 'SFMono-Regular', Consolas, monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .file-desc {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .build-box {
+            background: rgba(63,185,80,0.08);
+            border: 1px solid rgba(63,185,80,0.3);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .build-box h3 {
+            color: var(--green);
+            margin-top: 0;
+        }
+
+        footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Meshi v1.101</h1>
+<p class="subtitle">Architecture &amp; Reliability Improvements &mdash; May 1, 2026 &mdash; Base: v1.100 (build 30)</p>
+
+<div class="overview">
+    This release focuses on internal architecture improvements: thread-safety, retry logic for BLE operations,
+    input validation on mesh data, centralised configuration, and splitting oversized classes into focused components.
+    No UI changes &mdash; all improvements are under the hood.
+</div>
+
+<!-- ============================================================ -->
+<h2 class="high">High Priority Changes</h2>
+
+<div class="card">
+    <span class="label label-high">High</span>
+    <h3>1. Thread-Safety on Shared Mutable State</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p><code>pendingAcks</code>, <code>pendingPings</code>, and <code>typingJobs</code> were plain <code>mutableMapOf()</code> instances accessed from multiple coroutines without synchronisation &mdash; a data race waiting to happen.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <ul>
+            <li><code>pendingAcks</code> and <code>pendingPings</code> in <code>FrameRouter</code> now use <code>ConcurrentHashMap</code></li>
+            <li><code>typingJobs</code> in <code>ChatViewModel</code> now uses <code>ConcurrentHashMap</code></li>
+            <li><code>contactsAccumulator</code> in <code>FrameRouter</code> is guarded by <code>synchronized</code> blocks</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <span class="label label-high">High</span>
+    <h3>2. Retry Logic with Exponential Backoff</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p>Failed BLE sends surfaced an error immediately with no retry. On a mesh network where transient failures are common, a single failure doesn't mean the operation can't succeed.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <p>New <code>withBleRetry()</code> utility:</p>
+        <ul>
+            <li>Attempts the operation once</li>
+            <li>On failure, retries up to 3 times with exponential backoff (500ms &rarr; 1s &rarr; 2s)</li>
+            <li>Applied to all send operations: direct messages, channel messages, game protocol, pings, login, channel management</li>
+        </ul>
+    </div>
+</div>
+
+<div class="card">
+    <span class="label label-high">High</span>
+    <h3>3. Input Validation on Received Mesh Data</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p>Data arriving from the mesh is untrusted. Contact names, message text, GPS coordinates, and channel info were passed directly to the UI and database without validation.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <p>New <code>InputValidator</code> object applied at the protocol boundary in <code>FrameRouter</code>:</p>
+        <table>
+            <thead>
+                <tr><th>Validator</th><th>What it does</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>sanitizeName()</code></td><td>Strips control characters, trims whitespace, enforces 32-char max</td></tr>
+                <tr><td><code>sanitizeChannelName()</code></td><td>Same rules for channel names</td></tr>
+                <tr><td><code>sanitizeMessageText()</code></td><td>Strips control characters (preserves newlines), trims</td></tr>
+                <tr><td><code>isValidPubKeyPrefix()</code></td><td>Checks length &ge; 6 bytes and not all zeros</td></tr>
+                <tr><td><code>isValidGps()</code></td><td>Validates lat &isin; [-90, 90] and lon &isin; [-180, 180]</td></tr>
+                <tr><td><code>isValidChannelIdx()</code></td><td>Validates index &isin; [0, 7]</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <span class="label label-high">High</span>
+    <h3>4. Centralised Configuration Constants</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p>Magic numbers scattered across the codebase &mdash; timeouts, limits, thresholds, and intervals required hunting through multiple files to change.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <p>New <code>MeshiConfig</code> object with all constants in one place:</p>
+        <pre>object MeshiConfig {
+    const val HANDSHAKE_DEVICE_QUERY_TIMEOUT_MS = 6_000L
+    const val SEND_MAX_RETRIES = 3
+    const val SEND_RETRY_BASE_DELAY_MS = 500L
+    const val MESSAGE_MAX_LENGTH = 160
+    const val ADVERTS_MAX_SIZE = 50
+    const val ADVERTS_TTL_MS = 30 * 60 * 1000L
+    const val TYPING_INDICATOR_TTL_MS = 5_000L
+    const val SOS_ADVERT_INTERVAL_MS = 30_000L
+    const val DEFAULT_BATTERY_ALERT_PCT = 20
+    // ... and more
+}</pre>
+        <p>Referenced from <code>BleManager</code>, <code>MeshRepository</code>, <code>ChatViewModel</code>, <code>MeshiForegroundService</code>, <code>FrameRouter</code>, and <code>SosManager</code>.</p>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 class="medium">Medium Priority Changes</h2>
+
+<div class="card">
+    <span class="label label-medium">Medium</span>
+    <h3>5. ChatViewModel Split &mdash; Game Invite &amp; SOS Extraction</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p><code>ChatViewModel</code> was ~400 lines handling messaging, game invites for 4 games, SOS beacon management, typing indicators, reactions, search, and more.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <p>Extracted two focused managers:</p>
+        <ul>
+            <li><strong>GameInviteManager</strong> &mdash; Listens to game messages, routes invites (Reversi, Chess, TicTacToe, Battleship) to per-game StateFlows, provides clear methods</li>
+            <li><strong>SosManager</strong> &mdash; Manages the repeating flood advert loop, persists state to AppPreferences, resumes on restart, respects stealth mode</li>
+        </ul>
+        <p><code>ChatViewModel</code> delegates to both, removing ~80 lines of inline logic.</p>
+    </div>
+</div>
+
+<div class="card">
+    <span class="label label-medium">Medium</span>
+    <h3>6. MeshRepository Split &mdash; Frame Router Extraction</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p><code>MeshRepository</code> was ~500 lines handling both frame dispatch (the large <code>when(frame)</code> block) and send/command operations.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <p>Extracted <code>FrameRouter</code> class that owns:</p>
+        <ul>
+            <li>The entire <code>handleFrame()</code> dispatch with all frame types</li>
+            <li>Direct message routing (game protocol, reactions, typing, regular messages)</li>
+            <li>Channel message routing and advert processing</li>
+            <li>Contact list accumulation during sync</li>
+            <li>Thread-safe delivery confirmation (ack/ping) tracking</li>
+            <li>All SharedFlow emissions for game messages, typing events, reactions, pings, and login results</li>
+        </ul>
+        <p><code>MeshRepository</code> now focuses on send operations, scan control, and state exposure (~150 lines removed).</p>
+    </div>
+</div>
+
+<div class="card">
+    <span class="label label-medium">Medium</span>
+    <h3>7. Advert TTL (Time-to-Live)</h3>
+    <div class="problem">
+        <strong>Problem:</strong>
+        <p>The advert list kept the last 50 entries but never expired old ones. Adverts from nodes that went offline hours ago remained visible.</p>
+    </div>
+    <div class="fix">
+        <strong>Fix:</strong>
+        <ul>
+            <li>Added <code>timestampMs</code> field to <code>AdvertEvent</code></li>
+            <li><code>FrameRouter.addAdvert()</code> filters out adverts older than 30 minutes before adding new ones</li>
+            <li>Combined with the existing max-size cap of 50</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 class="files">File Inventory</h2>
+
+<h3>New Files (6)</h3>
+<div class="file-list">
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">MeshiConfig.kt</span>
+        <span class="file-desc">Centralised constants</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">ble/BleRetry.kt</span>
+        <span class="file-desc">Exponential backoff retry utility</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">protocol/InputValidator.kt</span>
+        <span class="file-desc">Mesh data sanitisation &amp; validation</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">repository/FrameRouter.kt</span>
+        <span class="file-desc">Frame dispatch logic from MeshRepository</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">viewmodel/GameInviteManager.kt</span>
+        <span class="file-desc">Game invite handling from ChatViewModel</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-new">New</span>
+        <span class="file-path">viewmodel/SosManager.kt</span>
+        <span class="file-desc">SOS beacon management from ChatViewModel</span>
+    </div>
+</div>
+
+<h3>Modified Files (5)</h3>
+<div class="file-list">
+    <div class="file-entry">
+        <span class="file-badge badge-mod">Mod</span>
+        <span class="file-path">ble/BleManager.kt</span>
+        <span class="file-desc">Uses MeshiConfig for timeouts &amp; MTU</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-mod">Mod</span>
+        <span class="file-path">repository/MeshRepository.kt</span>
+        <span class="file-desc">Delegates to FrameRouter, uses withBleRetry()</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-mod">Mod</span>
+        <span class="file-path">viewmodel/ChatViewModel.kt</span>
+        <span class="file-desc">Delegates to managers, ConcurrentHashMap, MeshiConfig</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-mod">Mod</span>
+        <span class="file-path">service/MeshiForegroundService.kt</span>
+        <span class="file-desc">Uses MeshiConfig for battery poll interval</span>
+    </div>
+    <div class="file-entry">
+        <span class="file-badge badge-mod">Mod</span>
+        <span class="file-path">repository/MeshRepository.kt</span>
+        <span class="file-desc">AdvertEvent gains timestampMs field</span>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<div class="build-box">
+    <h3>&#x2705; Build Status: SUCCESSFUL</h3>
+    <pre>./gradlew assembleDebug</pre>
+    <p>Output: <code>app/build/outputs/apk/debug/app-debug.apk</code></p>
+    <p style="color: var(--text-muted); font-size: 0.85rem;">All compiler warnings are pre-existing (deprecated Material icons, unused parameters in protocol parsers).</p>
+</div>
+
+<footer>
+    Meshi &mdash; MeshCore Companion App &mdash; v1.101 Changelog
+</footer>
+
+</body>
+</html>
